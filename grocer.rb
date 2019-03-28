@@ -26,7 +26,6 @@ def apply_coupons(cart, coupons)
   items_in_cart = cart.keys
 
   coupons.each do |item_with_discount|
-    binding.pry
     if items_in_cart.include?(item_with_discount[:item])
       cart["#{item_with_discount[:item]} W/COUPON"] = {
         :price => item_with_discount[:cost],
@@ -57,5 +56,22 @@ def apply_clearance(cart)
 end
 
 def checkout(cart, coupons)
-  # code here
+  consolidated_cart = consolidate_cart(cart)
+
+  cart_with_discounts = apply_coupons(consolidated_cart, coupons)
+
+  final_cart = apply_clearance(cart_with_discounts)
+
+  final_bill = 0
+
+  final_cart.each do |product, data|
+    final_bill = final_bill + (data[:price]*data[:count])
+  end
+
+  if final_bill > 100
+    final_bill = final_bill*0.9
+  end
+
+  final_bill
+
 end
