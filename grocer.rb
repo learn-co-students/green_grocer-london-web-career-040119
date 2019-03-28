@@ -26,21 +26,23 @@ def apply_coupons(cart, coupons)
   items_in_cart = cart.keys
 
   coupons.each do |item_with_discount|
+    binding.pry
     if items_in_cart.include?(item_with_discount[:item])
-      cart[item_with_discount[:item]][:count] = cart[item_with_discount[:item]][:count] - item_with_discount[:num]
       cart["#{item_with_discount[:item]} W/COUPON"] = {
         :price => item_with_discount[:cost],
         :clearance => cart[item_with_discount[:item]][:clearance],
-        :count => item_with_discount[:num]
+        :count => (cart[item_with_discount[:item]][:count]/item_with_discount[:num]).round(1)
       }
-      if cart[item_with_discount[:item]][:count] == 0
-        cart.delete(item_with_discount[:item])
-      end
+      cart[item_with_discount[:item]][:count] = cart[item_with_discount[:item]][:count] - item_with_discount[:num]
+=begin
+      It would make sense to add another if statement to remove items from the cart that have :count 0, after the coupons are applied.
+        if cart[item_with_discount[:item]][:count] == 0
+          cart.delete(item_with_discount[:item])
+        end
+=end
     end
   end
-
   cart
-
 end
 
 def apply_clearance(cart)
